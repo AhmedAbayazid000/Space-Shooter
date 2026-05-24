@@ -6,15 +6,17 @@ enum State {Menu, Playing ,Gameover};
 class Game{
     private:
         int highscore;
+        int currentscore;
         sf::RenderWindow window;
         State state;
-        //Background texture and sprite
+        //Background texture 
         sf::Texture backgroundT;
-        sf::Sprite backgroundS;
+        // sf::Sprite backgroundS;
         //Diffrent game screens
         void mainmenu();
         void gameover();
         void gamescreen();
+        int score;
     public:
         Game();
         int get_highscore();

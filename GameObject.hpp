@@ -3,8 +3,7 @@
 
 class Gameobject{
     protected:
-    // Sprite and texture for evry class that inherits for GameObject
-       sf::Sprite sprite;
+    // Texture for every class that inherits for GameObject
        sf::Texture texture;
        float x,y; 
        bool isAlive;
