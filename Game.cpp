@@ -1,29 +1,37 @@
 #include "Game.hpp"
 #include <SFML/Graphics.hpp>
-//Constructor Initializer list
-Game::Game() : highscore(0), window(sf::VideoMode(sf::Vector2u(800, 600)), "Space Shooter"), state(Menu) {
-    backgroundT.loadFromFile("Extra/MM background.png");
-}
-//Main loop Run function for the game
-void Game::run(){
-    while (window.isOpen()){
-        if (state==Menu)mainmenu();
-        else if (state==Playing)gamescreen();
-        else if (state== Gameover)gameover();
+#include <iostream>
+// Constructor Initializer list
+Game::Game() : highscore(0), window(sf::VideoMode(sf::Vector2u(1280, 720)), "Space Shooter"), state(Menu) {
+    if (!backgroundT.loadFromFile("C:\\Users\\ahmed_nxns003\\Desktop\\Game Project\\Project implementation step\\Extra\\background.png")) {
+        std::cout << "Failed to load background!" << std::endl;
     }
 }
-//Mainmenu screen and functions (Font,title,Quit,Start)
+
+// Main loop Run function for the game
+void Game::run(){
+    while (window.isOpen()){
+        if (state == Menu) mainmenu();
+        else if (state == Playing) gamescreen();
+        else if (state == Gameover) gameover();
+    }
+}
+
+// Main menu screen
 void Game::mainmenu(){
     sf::Sprite backgroundS(backgroundT);
-    sf::Font font ("Extra/font.ttf");
-    sf::Text title(font,"Space Shooter", 50);
-    title.setPosition(sf::Vector2f(300,200));
-    sf::Text begin(font,"Press Enter to begin",30);
-    begin.setPosition(sf::Vector2f(270,350));
-    sf::Text end (font, "Press Q to quit", 30 );
-    //The outter loop is to keep the screen running 
+    sf::Font font("C:\\Users\\ahmed_nxns003\\Desktop\\Game Project\\Project implementation step\\Extra\\font.ttf");
+    sf::Text title(font, "Space Shooter", 100);
+    sf::FloatRect titleBounds = title.getLocalBounds();
+    title.setPosition(sf::Vector2f((1280 - titleBounds.size.x) / 2, 180));
+    sf::Text begin(font, "Press Enter to begin", 40);
+    sf::FloatRect beginBounds = begin.getLocalBounds();
+    begin.setPosition(sf::Vector2f((1280 - beginBounds.size.x) / 2, 350));
+    sf::Text end(font, "Press Q to quit", 40);
+    sf::FloatRect endBounds = end.getLocalBounds();
+    end.setPosition(sf::Vector2f((1280 - endBounds.size.x) / 2, 420));
+
     while (window.isOpen() && state == Menu) {
-        //The inner loop is to check for events 
         while (auto event = window.pollEvent()) {
             if (event->is<sf::Event::Closed>())
                 window.close();
@@ -34,7 +42,6 @@ void Game::mainmenu(){
                     window.close();
             }
         }
-        //TO show the screen background and text
         window.clear();
         window.draw(backgroundS);
         window.draw(title);
@@ -42,21 +49,29 @@ void Game::mainmenu(){
         window.draw(end);
         window.display();
     }
-
 }
-//Main gameplay screen functions
+
+// Main gameplay screen
 void Game::gamescreen(){
-
+    while (window.isOpen() && state == Playing) {
+        while (auto event = window.pollEvent()) {
+            if (event->is<sf::Event::Closed>())
+                window.close();
+        }
+        window.clear();
+        window.display();
+    }
 }
-//Game over screen ("Game over" and current score) with the help of sfml::Clock
+
+// Game over screen
 void Game::gameover(){
     sf::Sprite backgroundS(backgroundT);
-    sf::Font font("Extra/font.ttf");
+    sf::Font font("C:\\Users\\ahmed_nxns003\\Desktop\\Game Project\\Project implementation step\\Extra\\font.ttf");
     sf::Text gameOver(font, "GAME OVER", 60);
-    gameOver.setPosition(sf::Vector2f(250, 200));
+    gameOver.setPosition(sf::Vector2f(490, 250));
     sf::Text score_(font, "Score: " + std::to_string(currentscore), 30);
-    score_.setPosition(sf::Vector2f(300, 320));
-    //sfml::Clock to count five seconds to show the game over screen
+    score_.setPosition(sf::Vector2f(550, 380));
+
     sf::Clock timer;
     while (window.isOpen() && timer.getElapsedTime().asSeconds() < 5) {
         while (auto event = window.pollEvent()) {
@@ -71,4 +86,3 @@ void Game::gameover(){
     }
     state = Menu;
 }
-

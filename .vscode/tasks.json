@@ -11,8 +11,8 @@
                 "${workspaceFolder}/*.cpp",
                 "-o",
                 "${workspaceFolder}/app.exe",
-                "-IC:/libs/SFML/include",
-                "-LC:/libs/SFML/lib",
+                "-IC:/SFML/SFML-3.1.0/include",
+                "-LC:/SFML/SFML-3.1.0/lib",
                 "-lsfml-graphics",
                 "-lsfml-window",
                 "-lsfml-system"
