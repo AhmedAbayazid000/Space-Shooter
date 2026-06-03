@@ -1,7 +1,7 @@
 #pragma once
 #include "GameObject.hpp"
 //Bullet class base for enemybullet and playerbullet
-class Bullet : public Gameobject {
+class Bullet : public GameObject {
 protected:
     float speed;
 

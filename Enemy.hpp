@@ -1,7 +1,10 @@
 #pragma once
 #include "GameObject.hpp"
+#include "Bullet.hpp"
+#include <memory>
+
 //Enemy attributes and inherits from GameObject
-class Enemy : public Gameobject {
+class Enemy : public GameObject {
 protected:
     float speed;
     float shootTimer;
@@ -10,7 +13,7 @@ protected:
 public:
     Enemy(float x, float y);
     virtual ~Enemy();
-    void shoot();
+    std::unique_ptr<Bullet> shoot();
     void update(float deltaTime) override;
     void draw(sf::RenderWindow& window) override;
 };

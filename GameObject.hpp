@@ -1,7 +1,7 @@
 #pragma once 
 #include <SFML/Graphics.hpp>
 
-class Gameobject{
+class GameObject{
     protected:
     // Texture for every class that inherits for GameObject
        sf::Texture texture;
@@ -9,9 +9,9 @@ class Gameobject{
        bool isAlive;
 
     public:
-    Gameobject(float x, float y);
-    virtual ~Gameobject();
+    GameObject(float x, float y);
+    virtual ~GameObject();
     //To make sure that the movement is framerate independent
-    virtual void update(float deltatime)=0;
+    virtual void update(float deltaTime)=0;
     virtual void draw(sf::RenderWindow& window)=0;
 };

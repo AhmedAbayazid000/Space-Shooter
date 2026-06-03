@@ -1,9 +1,13 @@
 #pragma once
 #include "GameObject.hpp"
+#include <vector>
+#include <memory>
+#include "PlayerBullet.hpp"
+
 //Enumerator for the diffrent types fo weapons
 enum Weapon { Normal, Shotgun, Rapid };
 
-class Player : public Gameobject {
+class Player : public GameObject {
     private:
         int lives;
         float speed;
@@ -14,7 +18,7 @@ class Player : public Gameobject {
         Player(float x, float y);
         virtual ~Player();
         void handleInput(float deltaTime);
-        void shoot();
+        std::vector<std::unique_ptr<Bullet>> shoot();
         void update(float deltaTime) override;
         void draw(sf::RenderWindow& window) override;
         int getLives();

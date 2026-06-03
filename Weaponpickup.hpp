@@ -3,7 +3,7 @@
 //Diffrent types of weapons enemies drop. The player can collect it by touching it 
 enum Pickup { ShotgunPickup, RapidPickup };
 
-class WeaponPickup : public Gameobject {
+class WeaponPickup : public GameObject {
 private:
     Pickup type;
     float speed;
