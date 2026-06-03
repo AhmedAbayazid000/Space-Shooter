@@ -10,15 +10,15 @@ Enemy::~Enemy() {
 }
 
 void Enemy::update(float deltaTime) {
-    // Enemy moves downwards
+// Enemy moves downwards
     y += speed * deltaTime;
     
-    // Updates shooter timer
+// Updates shooter timer
     if (shootTimer > 0) {
         shootTimer -= deltaTime;
     }
     
-    // If the enemy reaches the bottom game over screen appears
+// If the enemy reaches the bottom game over screen appears
     if (y > 720) {
         isAlive = false;
     }
@@ -31,6 +31,7 @@ void Enemy::draw(sf::RenderWindow& window) {
     window.draw(sprite);
 }
 
+//Create and return an enemy bullet
 std::unique_ptr<Bullet> Enemy::shoot() {
     return std::make_unique<EnemyBullet>(x, y);
 }

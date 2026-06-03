@@ -18,21 +18,21 @@ void Player::draw(sf::RenderWindow& window) {
 }
 
 void Player::handleInput(float deltaTime) {
-    // Moving left
+// Moving left
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Left)) {
         x -= speed * deltaTime;
     }
-    // Moving right
+// Moving right
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Right)) {
         x += speed * deltaTime;
     }
-    // Shooting 
+// Shooting 
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space)) {
         if (shootTimer <= 0) {
             shootTimer = shootCooldown;
         }
     }
-    // Update shooting timer
+// Update shooting timer
     if (shootTimer > 0) {
         shootTimer -= deltaTime;
     }
