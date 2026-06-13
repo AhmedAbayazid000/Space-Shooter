@@ -35,3 +35,13 @@ void Enemy::draw(sf::RenderWindow& window) {
 std::unique_ptr<Bullet> Enemy::shoot() {
     return std::make_unique<EnemyBullet>(x, y);
 }
+
+float Enemy::getShootTimer() { 
+    return shootTimer; 
+}
+void Enemy::setShootTimer(float timer) { 
+    shootTimer = timer; 
+}
+float Enemy::getShootCooldown() { 
+    return shootCooldown; 
+}

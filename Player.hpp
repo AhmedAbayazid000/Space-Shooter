@@ -17,6 +17,9 @@ class Player : public GameObject {
     public:
         Player(float x, float y);
         virtual ~Player();
+        float getShootTimer();
+        void setShootTimer(float timer);
+        float getShootCooldown();
         void handleInput(float deltaTime);
         std::vector<std::unique_ptr<Bullet>> shoot();
         void update(float deltaTime) override;

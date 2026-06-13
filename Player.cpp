@@ -59,3 +59,27 @@ std::vector<std::unique_ptr<Bullet>> Player::shoot() {
     }
     return bullets;
 }
+float Player::getShootTimer() { 
+    return shootTimer; 
+}
+void Player::setShootTimer(float timer) { 
+    shootTimer = timer; 
+}
+float Player::getShootCooldown() { 
+    return shootCooldown; 
+}
+int Player::getLives() {
+    return lives;
+}
+
+void Player::setLives(int newLives) {
+    lives = newLives;
+}
+
+Weapon Player::getCurrentWeapon() {
+    return currentWeapon;
+}
+
+void Player::setCurrentWeapon(Weapon weapon) {
+    currentWeapon = weapon;
+}
