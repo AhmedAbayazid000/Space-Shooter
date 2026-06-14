@@ -1,6 +1,7 @@
 #pragma once
 #include "Bullet.hpp"
-//Bullets fired by player moves upwards
+
+// bullet fired by the player, moves upward
 class PlayerBullet : public Bullet {
 public:
     PlayerBullet(float x, float y);

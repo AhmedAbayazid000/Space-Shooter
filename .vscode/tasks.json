@@ -11,11 +11,17 @@
                 "${workspaceFolder}/*.cpp",
                 "-o",
                 "${workspaceFolder}/app.exe",
+                "-DSFML_STATIC",
                 "-IC:/SFML/SFML-3.1.0/include",
                 "-LC:/SFML/SFML-3.1.0/lib",
-                "-lsfml-graphics",
-                "-lsfml-window",
-                "-lsfml-system"
+                "-lsfml-graphics-s",
+                "-lsfml-window-s",
+                "-lsfml-system-s",
+                "-lopengl32",
+                "-lfreetype",
+                "-lharfbuzz",
+                "-lwinmm",
+                "-lgdi32"
             ],
             "options": {
                 "cwd": "${workspaceFolder}"

@@ -1,14 +1,15 @@
 #include "GameObject.hpp"
 
-// Constructor - initializes position and sets object as alive
+// constructor, sets starting position and marks the object as alive
 GameObject::GameObject(float x, float y) : x(x), y(y), isAlive(true) {
 }
-// Destructor
+
 GameObject::~GameObject() {
 }
+
 float GameObject::getX() { 
     return x;
- }
+}
 float GameObject::getY() { 
     return y; 
 }
@@ -23,4 +24,12 @@ bool GameObject::getIsAlive() {
 }
 void GameObject::setIsAlive(bool alive) {
     isAlive = alive; 
+}
+
+// width/height of the sprite, used for collision boxes
+float GameObject::getWidth() {
+    return texture.getSize().x;
+}
+float GameObject::getHeight() {
+    return texture.getSize().y;
 }

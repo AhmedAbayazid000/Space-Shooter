@@ -4,20 +4,19 @@
 #include "WeaponPickup.hpp"
 #include <memory>
 
+// handles spawning enemies and weapon pickups
 class Spawner {
 private:
-    float spawnCooldown;
+    float spawnCooldown; // how often enemies spawn
     sf::Clock spawnTimer;
 
 public:
     Spawner(float spawnCooldown);
     ~Spawner();
-    //Returns true when its time to spawn a new enemy
-    bool shouldSpawn();
-    //Resets the timer after spawning 
-    void reset(); 
-//Spawns a random enemy tyoe at a random position
-    std::unique_ptr<Enemy> spawnEnemy();
-//Random chance to drop a weapon pickup
-    std::unique_ptr<WeaponPickup> spawnPickup(float x, float y);
+
+    bool shouldSpawn(); // true once spawnCooldown has passed
+    void reset();       // resets the timer after spawning
+
+    std::unique_ptr<Enemy> spawnEnemy(); // random enemy type, random x position
+    std::unique_ptr<WeaponPickup> spawnPickup(float x, float y); // chance to drop a weapon
 };

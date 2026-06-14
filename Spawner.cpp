@@ -3,40 +3,47 @@
 #include "Rusher.hpp"
 #include "Gunner.hpp"
 #include "WeaponPickup.hpp"
+#include "Config.hpp"
 #include <cstdlib>
 
-// Constructor - sets spawn cooldown
+// constructor, sets how often enemies should spawn
 Spawner::Spawner(float spawnCooldown) : spawnCooldown(spawnCooldown) {
 }
 
-// Destructor
 Spawner::~Spawner() {
 }
 
-// Returns true if enough time has passed to spawn a new enemy
+// checks if enough time has passed to spawn another enemy
 bool Spawner::shouldSpawn() {
     return spawnTimer.getElapsedTime().asSeconds() >= spawnCooldown;
 }
 
-// Resets the spawn timer after spawning
+// restarts the spawn timer
 void Spawner::reset() {
     spawnTimer.restart();
 }
 
-// Spawns a random enemy type at a random X position
+// picks a random enemy type and spawns it at a random x position
 std::unique_ptr<Enemy> Spawner::spawnEnemy() {
-    float randomP = rand() % 1280;
     int Etype = rand() % 3;
-    
-    if (Etype == 0) return std::make_unique<Grunt>(randomP, 0);
-    else if (Etype == 1) return std::make_unique<Rusher>(randomP, 0);
-    else return std::make_unique<Gunner>(randomP, 0);
+    std::unique_ptr<Enemy> enemy;
+
+    if (Etype == 0) enemy = std::make_unique<Grunt>(0, 0);
+    else if (Etype == 1) enemy = std::make_unique<Rusher>(0, 0);
+    else enemy = std::make_unique<Gunner>(0, 0);
+
+    // keep the enemy fully on screen horizontally
+    float maxX = 1280 - enemy->getWidth();
+    float randomP = rand() % (int)maxX;
+    enemy->setX(randomP);
+
+    return enemy;
 }
 
-// Random chance to drop a weapon pickup at given position
+// random chance to drop a weapon pickup when an enemy dies
 std::unique_ptr<WeaponPickup> Spawner::spawnPickup(float x, float y) {
     int chance = rand() % 100;
-    if (chance < 20) { // 20% drop chance
+    if (chance < WEAPON_DROP_CHANCE) {
         int Wtype = rand() % 2;
         if (Wtype == 0) return std::make_unique<WeaponPickup>(x, y, ShotgunPickup);
         else return std::make_unique<WeaponPickup>(x, y, RapidPickup);

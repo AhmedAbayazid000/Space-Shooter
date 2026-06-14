@@ -1,11 +1,11 @@
 #include "Gunner.hpp"
+#include "Config.hpp"
 
-//Shoots more frequently, cooldown reduced by 20%
+// faster shooter, overrides the default shoot cooldown
 Gunner::Gunner(float x, float y) : Enemy(x, y) {
-    shootCooldown = 1.6f;
+    shootCooldown = GUNNER_SHOOT_COOLDOWN;
     texture.loadFromFile("C:\\Users\\ahmed_nxns003\\Desktop\\Game Project\\Project implementation step\\Extra\\gunner.png");
 }
 
-// Destructor
 Gunner::~Gunner() {
 }

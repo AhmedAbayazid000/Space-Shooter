@@ -3,20 +3,20 @@
 #include "Bullet.hpp"
 #include <memory>
 
-//Enemy attributes and inherits from GameObject
+// Base enemy class, Grunt/Rusher/Gunner inherit from this
 class Enemy : public GameObject {
 protected:
-    float speed;
-    float shootTimer;
-    float shootCooldown;
-//Constructor, Destructor,Functions(shoot,update,draw)
+    float speed;        // how fast it moves down
+    float shootTimer;   // counts down until next shot
+    float shootCooldown; // time between shots
+
 public:
     Enemy(float x, float y);
     virtual ~Enemy();
     float getShootTimer();
     void setShootTimer(float timer);
     float getShootCooldown();
-    std::unique_ptr<Bullet> shoot();
+    std::unique_ptr<Bullet> shoot(); // creates an enemy bullet
     void update(float deltaTime) override;
     void draw(sf::RenderWindow& window) override;
 };

@@ -10,11 +10,13 @@
 #include "Explosion.hpp"
 #include "WeaponPickup.hpp"
 #include "Spawner.hpp"
+#include "Config.hpp"
 #include <vector>
 #include <memory>
 #include <iostream>
 #include <cstdlib>
 #include <algorithm>
+
 // Constructor Initializer list
 Game::Game() : highscore(0), window(sf::VideoMode(sf::Vector2u(1280, 720)), "Space Shooter"), state(Menu) {
     if (!backgroundT.loadFromFile("C:\\Users\\ahmed_nxns003\\Desktop\\Game Project\\Project implementation step\\Extra\\background.png")) {
@@ -22,10 +24,21 @@ Game::Game() : highscore(0), window(sf::VideoMode(sf::Vector2u(1280, 720)), "Spa
     }
 }
 
+// Returns the current high score
+int Game::get_highscore() {
+    return highscore;
+}
+
+// Updates high score only if the new score is higher
+void Game::set_highscore(int score) {
+    if (score > highscore) {
+        highscore = score;
+    }
+}
+
 // Main loop Run function for the game
 void Game::run(){
     while (window.isOpen()){
-        std::cout << "run loop, state=" << state << " window open=" << window.isOpen() << std::endl;
         if (state == Menu) mainmenu();
         else if (state == Playing) gamescreen();
         else if (state == Gameover) gameover();
@@ -46,16 +59,18 @@ void Game::mainmenu(){
     sf::FloatRect endBounds = end.getLocalBounds();
     end.setPosition(sf::Vector2f((1280 - endBounds.size.x) / 2, 420));
 
+    // Display the current high score below the menu options
+    sf::Text highScoreText(font, "High Score: " + std::to_string(get_highscore()), 30);
+    sf::FloatRect hsBounds = highScoreText.getLocalBounds();
+    highScoreText.setPosition(sf::Vector2f((1280 - hsBounds.size.x) / 2, 500));
+
     while (window.isOpen() && state == Menu) {
         while (auto event = window.pollEvent()) {
             if (event->is<sf::Event::Closed>())
                 window.close();
             if (auto* keyEvent = event->getIf<sf::Event::KeyPressed>()) {
-                if (keyEvent->code == sf::Keyboard::Key::Enter){
+                if (keyEvent->code == sf::Keyboard::Key::Enter)
                     state = Playing;
-                        std::cout << "Enter pressed, switching to Playing" << std::endl;
-
-                }
                 if (keyEvent->code == sf::Keyboard::Key::Q)
                     window.close();
             }
@@ -65,26 +80,40 @@ void Game::mainmenu(){
         window.draw(title);
         window.draw(begin);
         window.draw(end);
+        window.draw(highScoreText);
         window.display();
     }
 }
 
 // Main gameplay screen
 void Game::gamescreen() {
-    std::cout << "Entered gamescreen" << std::endl;
+    // Setup
     sf::Sprite backgroundS(backgroundT);
-    std::cout << "Background created" << std::endl;
     Player player(640, 650);
-    std::cout << "Player created" << std::endl;
-    Spawner spawner(2.0f);
-    std::cout << "Spawner created" << std::endl;
+    Spawner spawner(ENEMY_SPAWN_COOLDOWN);
     std::vector<std::unique_ptr<GameObject>> gameObjects;
     sf::Clock deltaClock;
     int score = 0;
-    std::cout << "About to enter loop" << std::endl;
+
+    // Heart icons for displaying player lives (max 3)
+    sf::Texture heartTexture;
+    heartTexture.loadFromFile("C:\\Users\\ahmed_nxns003\\Desktop\\Game Project\\Project implementation step\\Extra\\heart.png");
+    sf::Sprite heart1(heartTexture);
+    sf::Sprite heart2(heartTexture);
+    sf::Sprite heart3(heartTexture);
+    heart1.setScale(sf::Vector2f(0.5f, 0.5f));
+    heart2.setScale(sf::Vector2f(0.5f, 0.5f));
+    heart3.setScale(sf::Vector2f(0.5f, 0.5f));
+    heart1.setPosition(sf::Vector2f(1100, 10));
+    heart2.setPosition(sf::Vector2f(1145, 10));
+    heart3.setPosition(sf::Vector2f(1190, 10));
+
+    // HUD text created once, updated each frame
+    sf::Font font("C:\\Users\\ahmed_nxns003\\Desktop\\Game Project\\Project implementation step\\Extra\\font.ttf");
+    sf::Text scoreText(font, "Score: 0", 30);
+    scoreText.setPosition(sf::Vector2f(10, 10));
 
     while (window.isOpen() && state == Playing) {
-        std::cout << "Loop iteration" << std::endl;
         // Calculate time since last frame
         float deltaTime = deltaClock.restart().asSeconds();
 
@@ -115,11 +144,12 @@ void Game::gamescreen() {
             player.setShootTimer(player.getShootTimer() - deltaTime);
         }
 
-        // Enemy shooting
+        // Enemy shooting - collect new bullets separately to avoid modifying vector while iterating
+        std::vector<std::unique_ptr<GameObject>> newObjects;
         for (auto& obj : gameObjects) {
             if (auto* enemy = dynamic_cast<Enemy*>(obj.get())) {
                 if (enemy->getShootTimer() <= 0) {
-                    gameObjects.push_back(enemy->shoot());
+                    newObjects.push_back(enemy->shoot());
                     enemy->setShootTimer(enemy->getShootCooldown());
                 }
             }
@@ -137,14 +167,14 @@ void Game::gamescreen() {
                 for (auto& obj2 : gameObjects) {
                     if (auto* enemy = dynamic_cast<Enemy*>(obj2.get())) {
                         if (pb->getIsAlive() && enemy->getIsAlive() &&
-                            pb->getX() < enemy->getX() + 50 && pb->getX() + 10 > enemy->getX() &&
-                            pb->getY() < enemy->getY() + 50 && pb->getY() + 20 > enemy->getY()) {
+                            pb->getX() < enemy->getX() + enemy->getWidth() && pb->getX() + pb->getWidth() > enemy->getX() &&
+                            pb->getY() < enemy->getY() + enemy->getHeight() && pb->getY() + pb->getHeight() > enemy->getY()) {
                             pb->setIsAlive(false);
                             enemy->setIsAlive(false);
                             score += 10;
-                            gameObjects.push_back(std::make_unique<Explosion>(enemy->getX(), enemy->getY()));
+                            newObjects.push_back(std::make_unique<Explosion>(enemy->getX(), enemy->getY()));
                             auto pickup = spawner.spawnPickup(enemy->getX(), enemy->getY());
-                            if (pickup) gameObjects.push_back(std::move(pickup));
+                            if (pickup) newObjects.push_back(std::move(pickup));
                         }
                     }
                 }
@@ -152,21 +182,24 @@ void Game::gamescreen() {
             // Enemy bullet hits player
             if (auto* eb = dynamic_cast<EnemyBullet*>(obj.get())) {
                 if (eb->getIsAlive() &&
-                    eb->getX() < player.getX() + 50 && eb->getX() + 10 > player.getX() &&
-                    eb->getY() < player.getY() + 50 && eb->getY() + 20 > player.getY()) {
+                    eb->getX() < player.getX() + player.getWidth() && eb->getX() + eb->getWidth() > player.getX() &&
+                    eb->getY() < player.getY() + player.getHeight() && eb->getY() + eb->getHeight() > player.getY()) {
                     eb->setIsAlive(false);
                     player.setLives(player.getLives() - 1);
                     if (player.getLives() <= 0) {
+                        // Player ran out of lives, go to game over screen
                         state = Gameover;
                         currentscore = score;
+                        // Update high score if this run beat the previous best
+                        set_highscore(score);
                     }
                 }
             }
             // Player collects weapon pickup
             if (auto* pickup = dynamic_cast<WeaponPickup*>(obj.get())) {
                 if (pickup->getIsAlive() &&
-                    pickup->getX() < player.getX() + 50 && pickup->getX() + 30 > player.getX() &&
-                    pickup->getY() < player.getY() + 50 && pickup->getY() + 30 > player.getY()) {
+                    pickup->getX() < player.getX() + player.getWidth() && pickup->getX() + pickup->getWidth() > player.getX() &&
+                    pickup->getY() < player.getY() + player.getHeight() && pickup->getY() + pickup->getHeight() > player.getY()) {
                     if (pickup->getType() == ShotgunPickup) {
                         player.setCurrentWeapon(Shotgun);
                     } 
@@ -176,6 +209,11 @@ void Game::gamescreen() {
                     pickup->setIsAlive(false);
                 }
             }
+        }
+
+        // Add newly created objects (bullets, explosions, pickups) to main vector
+        for (auto& obj : newObjects) {
+            gameObjects.push_back(std::move(obj));
         }
 
         // Remove dead objects from vector
@@ -193,14 +231,15 @@ void Game::gamescreen() {
             obj->draw(window);
         }
 
-        // Draw HUD - score and lives
-        sf::Font font("C:\\Users\\ahmed_nxns003\\Desktop\\Game Project\\Project implementation step\\Extra\\font.ttf");
-        sf::Text scoreText(font, "Score: " + std::to_string(score), 30);
-        scoreText.setPosition(sf::Vector2f(10, 10));
-        sf::Text livesText(font, "Lives: " + std::to_string(player.getLives()), 30);
-        livesText.setPosition(sf::Vector2f(1100, 10));
+        // Update and draw HUD - score
+        scoreText.setString("Score: " + std::to_string(score));
         window.draw(scoreText);
-        window.draw(livesText);
+
+        // Draw one heart per remaining life
+        if (player.getLives() >= 1) window.draw(heart1);
+        if (player.getLives() >= 2) window.draw(heart2);
+        if (player.getLives() >= 3) window.draw(heart3);
+
         window.display();
     }
 }

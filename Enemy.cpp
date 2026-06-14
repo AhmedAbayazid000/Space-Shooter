@@ -1,37 +1,37 @@
 #include "Enemy.hpp"
 #include "EnemyBullet.hpp"
+#include "Config.hpp"
 
-// Constructor
-Enemy::Enemy(float x, float y) : GameObject(x, y), speed(100.0f), shootTimer(0.0f), shootCooldown(2.0f) {
+// constructor, default values from config (Grunt uses these as is)
+Enemy::Enemy(float x, float y) : GameObject(x, y), speed(ENEMY_BASE_SPEED), shootTimer(0.0f), shootCooldown(ENEMY_BASE_SHOOT_COOLDOWN) {
 }
 
-// Destructor
 Enemy::~Enemy() {
 }
 
 void Enemy::update(float deltaTime) {
-// Enemy moves downwards
+    // move down
     y += speed * deltaTime;
-    
-// Updates shooter timer
+
+    // count down shoot timer
     if (shootTimer > 0) {
         shootTimer -= deltaTime;
     }
-    
-// If the enemy reaches the bottom game over screen appears
+
+    // remove enemy if it goes off the bottom of the screen
     if (y > 720) {
         isAlive = false;
     }
 }
 
-//Draws the enemy
+// draws the enemy sprite
 void Enemy::draw(sf::RenderWindow& window) {
     sf::Sprite sprite(texture);
     sprite.setPosition(sf::Vector2f(x, y));
     window.draw(sprite);
 }
 
-//Create and return an enemy bullet
+// spawns a bullet at the enemy's position
 std::unique_ptr<Bullet> Enemy::shoot() {
     return std::make_unique<EnemyBullet>(x, y);
 }

@@ -1,15 +1,15 @@
 #pragma once
 #include "GameObject.hpp"
 
-// Explosion animation played when an enemy is destroyed
+// Explosion animation, plays when an enemy is destroyed then removes itself
 class Explosion : public GameObject {
 private:
-    int currentFrame;    // current frame of the animation
-    int totalFrames;     // total number of frames in the spritesheet
-    int frameWidth;      // width of each frame in pixels
-    int frameHeight;
-    float animationTimer;  // tracks time between frame changes
-    float animationSpeed;  // time between each frame
+    int currentFrame;     // which frame we're on
+    int totalFrames;      // total frames in the spritesheet (8)
+    int frameWidth;       // width of one frame in pixels
+    int frameHeight;      // height of one frame in pixels
+    float animationTimer; // time since last frame change
+    float animationSpeed; // how long each frame is shown
 
 public:
     Explosion(float x, float y);

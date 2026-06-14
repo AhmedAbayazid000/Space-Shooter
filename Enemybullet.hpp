@@ -1,6 +1,7 @@
 #pragma once
 #include "Bullet.hpp"
-//Enemy bullet moves downwards
+
+// Bullet fired by enemies, moves downward toward the player
 class EnemyBullet : public Bullet {
 public:
     EnemyBullet(float x, float y);

@@ -1,26 +1,26 @@
 #pragma once 
 #include <SFML/Graphics.hpp>
-//Enumerator to show the current game screen
-enum State {Menu, Playing ,Gameover};
 
+// keeps track of which screen we're currently on
+enum State {Menu, Playing, Gameover};
+
+// main class that runs the whole game, holds the window and switches between screens
 class Game{
     private:
-        int highscore;
-        int currentscore;
+        int highscore;     // best score across this session
+        int currentscore;  // score from the last finished run, shown on game over screen
         sf::RenderWindow window;
         State state;
-        //Background texture 
-        sf::Texture backgroundT;
-        // sf::Sprite backgroundS;
-        //Diffrent game screens
+        sf::Texture backgroundT; // shared background image used on all screens
+
+        // the three screens of the game
         void mainmenu();
         void gameover();
         void gamescreen();
-        int score;
+
     public:
         Game();
         int get_highscore();
         void set_highscore(int score);
-        void run();
-
+        void run(); // main loop
 };
